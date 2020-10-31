@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            background: #222;
+        }
+
+        #inputBox {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 44px;
+            display: flex;
+        }
+
+        #input {
+            flex: 1;
+            padding: 0 10px;
+            font-size: 20px;
+        }
+
+        #sendButton {
+            padding: 0 20px;
+            font-size: 20px;
+        }
+
+        #wall {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 44px;
+            overflow: scroll;
+            float: left;
+        }
+
+        #wall > span {
+            display: inline-block;
+            padding: 3px 10px;
+            margin: 5px;
+            height: 30px;
+            line-height: 30px;
+            color: #fff;
+            font-size: 20px;
+        }
+
+    </style>
+    <script>
+        function init() {
+            fetch("/data/wall/100:0").then(r => r.json()).then(list => {
+                for (let data of list) {
+                    addToWall(data)
+                }
+            })
+        }
+
+        let borderTypes = ['dashed', 'dotted', 'solid']
+
+        function addToWall(data) {
+            let item = document.createElement("span")
+            item.innerText = data
+            let color = 'rgb(' + (Math.ceil(Math.random() * 155) + 100) + ',' + (Math.ceil(Math.random() * 155) + 100) + ',' + (Math.ceil(Math.random() * 155) + 100) + ')'
+            let boardType = borderTypes[Math.floor(Math.random() * 3)]
+            item.style.color = color
+            item.style.border = '1px ' + color + ' ' + boardType
+            wall.appendChild(item)
+        }
+
+        function send() {
+            if (!input.value) return alert("请先输入内容")
+            fetch("/data/wall", {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({data: input.value}),
+            }).then(r => r.json()).then(ok => {
+                if (!ok) {
+                    alert("发送失败，请稍后再试！")
+                } else {
+                    addToWall(input.value)
+                    input.value = ""
+                }
+            })
+        }
+    </script>
+</head>
+<body onload="init()">
+<div id="wall"></div>
+<div id="inputBox">
+    <input id="input" placeholder="请输入您想上墙的内容"/>
+    <button id="sendButton" onclick="send()">上墙</button>
+</div>
+</body>
+</html>
