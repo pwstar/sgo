@@ -35,5 +35,6 @@ Is a demo for put content to the wall.
 1、download wall via https://github.com/pwstar/sgo/archive/main.zip 
 2、put bin/server.xxx to wall directory
 3、run wall/server.xxx
+4、open http://localhost
 ```
 
